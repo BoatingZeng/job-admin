@@ -82,6 +82,18 @@ export const constantRoutes = [
         meta: { title: '兼职', icon: 'dashboard', affix: true }
       }
     ]
+  },
+  {
+    path: '/categoryAndTag',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/category-and-tag/index'),
+        name: 'CategoryAndTag',
+        meta: { title: '栏目和标签', icon: 'dashboard' }
+      }
+    ]
   }
   // {
   //   path: '/',

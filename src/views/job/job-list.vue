@@ -25,9 +25,9 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.currentPage" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
     <el-dialog :visible.sync="editDialogVisible" :close-on-click-modal="false">
-      <el-form :model="editingRow" label-width="80px">
+      <el-form ref="form" :model="editingRow" :rules="rules" label-width="80px">
         <el-form-item label="标题" prop="title">
-          <el-input v-model="editingRow.title" />
+          <el-input v-model.trim="editingRow.title" />
         </el-form-item>
         <el-form-item label="详情" prop="detail">
           <el-input v-model="editingRow.detail" type="textarea" />
@@ -35,74 +35,114 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="微信号" prop="wechatId">
-              <el-input v-model="editingRow.wechatId" />
+              <el-input v-model.trim="editingRow.wechatId" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="薪酬" prop="salary">
-              <el-input v-model="editingRow.salary" />
+              <el-input v-model.trim="editingRow.salary" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="6">
-            <el-form-item label="市" prop="city">
-              <el-input v-model="editingRow.city" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="区" prop="district">
-              <el-input v-model="editingRow.district" />
+          <el-col :span="12">
+            <el-form-item label="省/市/区">
+              <el-cascader
+                v-model="editingRow.cityOptions"
+                filterable
+                :options="regionDataPlus"
+                style="width: 100%;"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="经度" prop="longitude">
-              <el-input v-model="editingRow.longitude" />
+              <el-input v-model.trim="editingRow.longitude" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="纬度" prop="latitude">
-              <el-input v-model="editingRow.latitude" />
+              <el-input v-model.trim="editingRow.latitude" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-form-item label="详细地址" prop="address">
-          <el-input v-model="editingRow.address" />
+          <el-input v-model.trim="editingRow.address" />
         </el-form-item>
-        <el-form-item label="性别要求" prop="requiredGender">
-          <el-select v-model="editingRow.requiredGender" clearable>
-            <el-option
-              v-for="{ label, value } in jobDict.requiredGender"
-              :key="value"
-              :label="label"
-              :value="value"
-            />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="持续时间" prop="durationType">
-          <el-select v-model="editingRow.durationType" clearable>
-            <el-option
-              v-for="{ label, value } in jobDict.durationType"
-              :key="value"
-              :label="label"
-              :value="value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="栏目" prop="categoryId">
-          <el-input v-model="editingRow.categoryId" />
-        </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-select v-model="editingRow.status" clearable>
-            <el-option
-              v-for="{ label, value } in jobDict.status"
-              :key="value"
-              :label="label"
-              :value="value"
-            />
-          </el-select>
-        </el-form-item>
+        <el-row>
+          <el-col :span="6">
+            <el-form-item label="状态" prop="status">
+              <el-select v-model="editingRow.status">
+                <el-option
+                  v-for="{ label, value } in jobDict.status"
+                  :key="value"
+                  :label="label"
+                  :value="value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="性别要求" prop="requiredGender">
+              <el-select v-model="editingRow.requiredGender">
+                <el-option
+                  v-for="{ label, value } in jobDict.requiredGender"
+                  :key="value"
+                  :label="label"
+                  :value="value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="持续时间" prop="durationType">
+              <el-select v-model="editingRow.durationType">
+                <el-option
+                  v-for="{ label, value } in jobDict.durationType"
+                  :key="value"
+                  :label="label"
+                  :value="value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="栏目" prop="categoryId">
+              <el-select v-model="editingRow.categoryId" filterable clearable @change="handleCategoryChange">
+                <el-option
+                  v-for="item in categoryList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="开始时间" prop="startTime">
+              <el-date-picker
+                v-model="editingRow.startTime"
+                type="datetime"
+                default-time="00:00:00"
+                value-format="yyyy-MM-dd HH:mm:ss"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="标签" prop="tags">
+              <el-select v-model="editingRow.tags" multiple filterable clearable style="width: 100%;">
+                <el-option
+                  v-for="item in tagList"
+                  :key="item.name"
+                  :label="item.name"
+                  :value="item.name"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
 
       <div slot="footer" class="dialog-footer">
@@ -118,9 +158,50 @@
 </template>
 
 <script>
+import { regionDataPlus, CodeToText, TextToCode } from 'element-china-area-data';
+import { numWithRange } from '@/utils/validate'
 import { fetchJobList, createJob, updateJob } from '@/api/job'
+import { fetchCategoryList } from '@/api/category';
+import { fetchTagList } from '@/api/tag';
 import { getDict } from '@/api/main'
 import Pagination from '@/components/Pagination'
+
+function convertTextToCodeList(provinceText, cityText, districtText) {
+  const codeList = [];
+  if (provinceText && TextToCode[provinceText]) {
+    const province = TextToCode[provinceText];
+    codeList.push(province.code);
+    if (cityText && province[cityText]) {
+      const city = province[cityText];
+      codeList.push(city.code);
+      if (districtText && city[districtText]) {
+        codeList.push(city[districtText].code);
+      } else {
+        codeList.push('');
+      }
+    } else {
+      codeList.push('');
+    }
+  }
+  return codeList;
+}
+
+function parseSaveCity(v) {
+  if (!v || v === '全部') return '';
+  else return v;
+}
+
+function genNumValidate(min, max) {
+  return function(rule, value, callback) {
+    if (value) {
+      const e = numWithRange(value, min, max);
+      if (e) callback(e);
+      else callback();
+    } else {
+      callback();
+    }
+  }
+}
 
 export default {
   name: 'JobList',
@@ -140,12 +221,38 @@ export default {
         status: {},
         requiredGender: {},
         durationType: {}
-      }
+      },
+      categoryList: [],
+      tagList: [],
+      rules: {
+        title: [
+          { required: true },
+        ],
+        detail: [
+          { required: true },
+        ],
+        wechatId: [
+          { required: true },
+        ],
+        salary: [
+          { required: true },
+        ],
+        longitude: [
+          { validator: genNumValidate(-180, 180) }
+        ],
+        latitude: [
+          { validator: genNumValidate(-90, 90) }
+        ]
+      },
+      regionDataPlus,
+      cityOptions: [],
     }
   },
   created() {
-    this.getDict()
-    this.getList()
+    this.getCategory();
+    this.getTag();
+    this.getDict();
+    this.getList();
   },
   methods: {
     async getDict() {
@@ -161,6 +268,15 @@ export default {
     },
     handleEdit(row) {
       this.editingRow = { ...row }
+      if (this.editingRow.tags && typeof this.editingRow.tags === 'string') {
+        const tagList = this.editingRow.tags.split(',');
+        this.editingRow.tags = tagList;
+      } else {
+        this.editingRow.tags = [];
+      }
+      const { province, city, district } = this.editingRow;
+      this.editingRow.cityOptions = convertTextToCodeList(province, city, district);
+      console.log(this.editingRow.cityOptions);
       this.editDialogVisible = true
     },
     handleAdd() {
@@ -168,14 +284,48 @@ export default {
       this.editDialogVisible = true
     },
     async handleSave() {
-      if (this.editingRow.id) {
-        await updateJob(this.editingRow)
+      const isValid = await this.$refs.form.validate();
+      if (!isValid) return;
+      const saveRow = { ...this.editingRow };
+      delete saveRow.createdAt;
+      delete saveRow.updatedAt;
+      if (saveRow.tags && saveRow.tags.length > 0) {
+        saveRow.tags = saveRow.tags.join(',')
       } else {
-        await createJob(this.editingRow)
+        saveRow.tags = '';
+      }
+      if (!saveRow.categoryId) saveRow.categoryId = null;
+
+      const co = saveRow.cityOptions;
+      saveRow.province = parseSaveCity(CodeToText[co[0]]);
+      saveRow.city = parseSaveCity(CodeToText[co[1]]);
+      saveRow.district = parseSaveCity(CodeToText[co[2]]);
+
+      delete saveRow.cityOptions;
+      if (saveRow.id) {
+        await updateJob(saveRow)
+      } else {
+        await createJob(saveRow)
       }
       this.editDialogVisible = false
       this.getList()
-    }
+    },
+    async getCategory() {
+      const res = await fetchCategoryList();
+      this.categoryList = res.data;
+    },
+    async getTag() {
+      const res = await fetchTagList();
+      this.tagList = res.data;
+    },
+    handleCategoryChange(value) {
+      if (value) {
+        const { name } = this.categoryList.find(item => item.id === value);
+        this.editingRow.categoryName = name;
+      } else {
+        this.editingRow.categoryName = '';
+      }
+    },
   }
 }
 </script>

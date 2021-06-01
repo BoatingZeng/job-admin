@@ -85,3 +85,23 @@ export function isArray(arg) {
   }
   return Array.isArray(arg)
 }
+
+/**
+ * 是不是数字，正数、负数、小数
+ * @param {Number|String} num
+ * @returns
+ */
+export function isFloat(num) {
+  const reg = /^(\-|\+)?\d+(\.\d+)?$/;
+  return reg.test(num);
+}
+
+export function numWithRange(num, min, max) {
+  if (isFloat(num)) {
+    const n = parseFloat(num);
+    if (n <= max && n >= min) return null;
+    else return new Error(`范围${min}至${max}`);
+  } else {
+    return new Error('请输入数字');
+  }
+}

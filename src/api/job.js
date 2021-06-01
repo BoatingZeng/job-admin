@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function fetchJobList(data) {
   return request({
-    url: '/job/listWithCount',
+    url: '/job/listAndCount',
     method: 'post',
     data
   })
