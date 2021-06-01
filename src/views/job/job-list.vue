@@ -12,12 +12,20 @@
       fit
       style="width: 100%;"
     >
-      <el-table-column label="ID" prop="id" />
-      <el-table-column label="标题" prop="title" />
-      <el-table-column label="详情" prop="detail" />
+      <el-table-column label="ID" prop="id" show-overflow-tooltip />
+      <el-table-column label="标题" prop="title" show-overflow-tooltip />
+      <el-table-column label="开始时间" prop="startTime" show-overflow-tooltip />
+      <el-table-column label="详情" prop="detail" show-overflow-tooltip />
+      <el-table-column label="微信号" prop="wechatId" show-overflow-tooltip />
+      <el-table-column label="薪酬" prop="salary" show-overflow-tooltip />
+      <el-table-column label="详细地址" prop="address" show-overflow-tooltip />
+      <el-table-column label="栏目" prop="categoryName" show-overflow-tooltip />
+      <el-table-column label="标签" prop="tags" show-overflow-tooltip />
       <el-table-column label="操作">
         <template v-slot="scope">
-          <el-button type="primary" size="small" @click="handleEdit(scope.row)">编辑</el-button>
+          <el-button type="primary" size="mini" @click="handleEdit(scope.row)">编辑</el-button>
+          <el-button v-if="scope.row.status === jobDict.status.on.value" type="warning" size="mini" :loading="operating" @click="handleChangeStatus(scope.row)">撤回</el-button>
+          <el-button v-else type="success" size="mini" :loading="operating" @click="handleChangeStatus(scope.row)">发布</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -149,7 +157,7 @@
         <el-button @click="editDialogVisible = false">
           取消
         </el-button>
-        <el-button type="primary" @click="handleSave">
+        <el-button type="primary" :loading="operating" @click="handleSave">
           保存
         </el-button>
       </div>
@@ -211,6 +219,7 @@ export default {
       list: [],
       total: 0,
       listLoading: true,
+      operating: false,
       listQuery: {
         currentPage: 1,
         pageSize: 10
@@ -286,6 +295,7 @@ export default {
     async handleSave() {
       const isValid = await this.$refs.form.validate();
       if (!isValid) return;
+      this.operating = true;
       const saveRow = { ...this.editingRow };
       delete saveRow.createdAt;
       delete saveRow.updatedAt;
@@ -307,7 +317,8 @@ export default {
       } else {
         await createJob(saveRow)
       }
-      this.editDialogVisible = false
+      this.editDialogVisible = false;
+      this.operating = false;
       this.getList()
     },
     async getCategory() {
@@ -326,6 +337,17 @@ export default {
         this.editingRow.categoryName = '';
       }
     },
+    async handleChangeStatus(row) {
+      this.operating = true;
+      const { id, status } = row;
+      let newStatus = this.jobDict.status.on.value;
+      if (status === this.jobDict.status.on.value) {
+        newStatus = this.jobDict.status.off.value;
+      }
+      await updateJob({ id, status: newStatus });
+      this.operating = false;
+      this.getList();
+    }
   }
 }
 </script>
