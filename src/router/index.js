@@ -94,6 +94,18 @@ export const constantRoutes = [
         meta: { title: '栏目和标签', icon: 'dashboard' }
       }
     ]
+  },
+  {
+    path: '/logs',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/logs/index'),
+        name: 'Logs',
+        meta: { title: '日志', icon: 'dashboard' }
+      }
+    ]
   }
   // {
   //   path: '/',
