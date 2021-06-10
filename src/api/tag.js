@@ -15,6 +15,14 @@ export function createTag(data) {
   });
 }
 
+export function updateTag(data) {
+  return request({
+    url: '/tag/update',
+    method: 'post',
+    data
+  });
+}
+
 export function deleteTag(id) {
   return request({
     url: '/tag/delete',

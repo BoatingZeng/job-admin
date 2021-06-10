@@ -15,6 +15,14 @@ export function createCategory(data) {
   })
 }
 
+export function updateCategory(data) {
+  return request({
+    url: '/category/update',
+    method: 'post',
+    data
+  });
+}
+
 export function deleteCategory(id) {
   return request({
     url: '/category/delete',

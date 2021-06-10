@@ -3,12 +3,13 @@
     :fetch-fun="fetchFun"
     :create-fun="createFun"
     :delete-fun="deleteFun"
+    :update-fun="updateFun"
   />
 </template>
 
 <script>
 import SimpleTable from './simple-table';
-import { fetchCategoryList, createCategory, deleteCategory } from '@/api/category';
+import { fetchCategoryList, createCategory, deleteCategory, updateCategory } from '@/api/category';
 
 export default {
   name: 'CategoryManage',
@@ -24,7 +25,10 @@ export default {
     },
     deleteFun(id) {
       return deleteCategory(id);
-    }
+    },
+    updateFun(row) {
+      return updateCategory(row);
+    },
   }
 }
 </script>

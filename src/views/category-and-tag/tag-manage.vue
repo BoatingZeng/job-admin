@@ -3,12 +3,13 @@
     :fetch-fun="fetchFun"
     :create-fun="createFun"
     :delete-fun="deleteFun"
+    :update-fun="updateFun"
   />
 </template>
 
 <script>
 import SimpleTable from './simple-table';
-import { fetchTagList, createTag, deleteTag } from '@/api/tag';
+import { fetchTagList, createTag, deleteTag, updateTag } from '@/api/tag';
 
 export default {
   name: 'Tag',
@@ -24,6 +25,9 @@ export default {
     },
     deleteFun(id) {
       return deleteTag(id);
+    },
+    updateFun(row) {
+      return updateTag(row);
     }
   }
 };

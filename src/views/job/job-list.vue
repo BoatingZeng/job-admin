@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="filter-container">
       <el-button @click="getList">查询</el-button>
-      <el-button @click="handleAdd">添加</el-button>
+      <el-button type="primary" @click="handleAdd">添加</el-button>
     </div>
 
     <el-table

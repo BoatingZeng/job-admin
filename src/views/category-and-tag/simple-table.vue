@@ -2,7 +2,7 @@
   <div>
     <div class="filter-container">
       <el-button @click="getList">查询</el-button>
-      <el-button @click="handleAdd">添加</el-button>
+      <el-button type="primary" @click="handleAdd">添加</el-button>
     </div>
     <el-table
       v-loading="listLoading"
@@ -13,9 +13,11 @@
     >
       <el-table-column label="ID" prop="id" />
       <el-table-column label="名称" prop="name" />
+      <el-table-column label="排序" prop="sort" />
       <el-table-column label="操作">
         <template v-slot="scope">
-          <el-button type="danger" size="small" @click="handleDelete(scope.row)">删除</el-button>
+          <el-button type="primary" size="mini" @click="handleModify(scope.row)">编辑</el-button>
+          <el-button type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -23,6 +25,9 @@
       <el-form ref="form" :model="editingRow" :rules="rules" label-width="80px">
         <el-form-item label="名称" prop="name">
           <el-input v-model.trim="editingRow.name" />
+        </el-form-item>
+        <el-form-item label="排序" prop="sort">
+          <el-input v-model.number="editingRow.sort" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -49,6 +54,10 @@ export default {
       type: Function,
       required: true
     },
+    updateFun: {
+      type: Function,
+      required: true
+    },
     deleteFun: {
       type: Function,
       required: true
@@ -64,6 +73,10 @@ export default {
         name: [
           { required: true },
         ],
+        sort: [
+          { required: true },
+          { type: 'number' },
+        ]
       },
     }
   },
@@ -78,13 +91,26 @@ export default {
       this.listLoading = false
     },
     handleAdd() {
-      this.editingRow = {}
+      this.editingRow = {
+        name: '',
+        sort: 0,
+      }
       this.editDialogVisible = true
+    },
+    handleModify(row) {
+      this.editingRow = {
+        ...row,
+      };
+      this.editDialogVisible = true;
     },
     async handleSave() {
       const isValid = await this.$refs.form.validate();
       if (!isValid) return;
-      await this.createFun(this.editingRow)
+      if (this.editingRow.id) {
+        await this.updateFun(this.editingRow);
+      } else {
+        await this.createFun(this.editingRow)
+      }
       this.editDialogVisible = false
       this.getList()
     },
