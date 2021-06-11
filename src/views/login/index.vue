@@ -96,8 +96,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'zengdeting',
-        password: 'boatingzeng233'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
