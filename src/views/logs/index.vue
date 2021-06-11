@@ -1,10 +1,11 @@
 <template>
   <el-container class="log-container">
     <el-aside>
-      <div>
+      <div
+        v-for="file in fileList"
+        :key="file.name"
+      >
         <el-link
-          v-for="file in fileList"
-          :key="file.name"
           :type="file.name === currentFile ? 'primary ' : 'default'"
           @click="getFileContent(file.name)"
         >{{ `${file.name}(${parseSize(file.size)})` }}</el-link>
