@@ -1,12 +1,14 @@
 <template>
   <el-container class="log-container">
     <el-aside>
-      <el-link
-        v-for="file in fileList"
-        :key="file.name"
-        :type="file.name === currentFile ? 'primary ' : 'default'"
-        @click="getFileContent(file.name)"
-      >{{ `${file.name}(${parseSize(file.size)})` }}</el-link>
+      <div>
+        <el-link
+          v-for="file in fileList"
+          :key="file.name"
+          :type="file.name === currentFile ? 'primary ' : 'default'"
+          @click="getFileContent(file.name)"
+        >{{ `${file.name}(${parseSize(file.size)})` }}</el-link>
+      </div>
     </el-aside>
     <el-main class="file-content">
       <el-button v-clipboard:copy="fileContent" v-clipboard:success="clipboardSuccess">复制</el-button>
