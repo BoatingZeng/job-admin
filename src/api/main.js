@@ -17,13 +17,32 @@ export async function getDict(key) {
       key
     }
   })
-  value = res.data
-  if (value) {
+  const dict = res.data;
+  if (dict) {
+    const value2Label = {};
+    const label2Value = {};
+    for (const field in dict) {
+      if (!Object.prototype.hasOwnProperty.call(dict, field)) continue;
+      const fieldObj = dict[field];
+      value2Label[field] = {};
+      label2Value[field] = {};
+      for (const key in fieldObj) {
+        if (!Object.prototype.hasOwnProperty.call(fieldObj, key)) continue;
+        const { label, value } = fieldObj[key];
+        value2Label[field][value] = label;
+        label2Value[field][label] = value;
+      }
+    }
+    value = {
+      dict,
+      value2Label,
+      label2Value
+    };
     try {
       sessionStorage.setItem(key, JSON.stringify(value))
     } catch (e) {
       console.error(e)
     }
   }
-  return value
+  return value || {};
 }

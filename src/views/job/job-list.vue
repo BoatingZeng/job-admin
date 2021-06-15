@@ -13,6 +13,15 @@
       style="width: 100%;"
     >
       <el-table-column label="ID" prop="id" show-overflow-tooltip />
+      <el-table-column label="状态" prop="status">
+        <template v-slot="scope">
+          <el-tag
+            :type="scope.row.status === jobDict.status.on.value ? 'success' : 'warning'"
+          >
+            {{ scope.row.status === jobDict.status.on.value ? '已上架' : '未上架' }}
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="标题" prop="title" show-overflow-tooltip />
       <el-table-column label="开始时间" prop="startTime" show-overflow-tooltip />
       <el-table-column label="详情" prop="detail" show-overflow-tooltip />
@@ -231,6 +240,11 @@ export default {
         requiredGender: {},
         durationType: {}
       },
+      jobValue2Label: {
+        status: {},
+        requiredGender: {},
+        durationType: {}
+      },
       categoryList: [],
       tagList: [],
       rules: {
@@ -265,8 +279,9 @@ export default {
   },
   methods: {
     async getDict() {
-      const dict = await getDict('job')
-      if (dict) this.jobDict = dict
+      const { dict, value2Label } = await getDict('job')
+      if (dict) this.jobDict = dict;
+      if (value2Label) this.jobValue2Label = value2Label;
     },
     async getList() {
       this.listLoading = true
