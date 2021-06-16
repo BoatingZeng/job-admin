@@ -96,6 +96,18 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/weixinUser',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/weixin-user/index'),
+        name: 'WeixinUser',
+        meta: { title: '微信用户', icon: 'dashboard' }
+      }
+    ]
+  },
+  {
     path: '/logs',
     component: Layout,
     children: [
@@ -104,6 +116,18 @@ export const constantRoutes = [
         component: () => import('@/views/logs/index'),
         name: 'Logs',
         meta: { title: '日志', icon: 'dashboard' }
+      }
+    ]
+  },
+  {
+    path: '/admin',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/admin/index'),
+        name: 'Admin',
+        meta: { title: '管理员账号', icon: 'dashboard' }
       }
     ]
   }
