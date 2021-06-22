@@ -46,3 +46,10 @@ export async function getDict(key) {
   }
   return value || {};
 }
+
+export function adminInfo() {
+  return request({
+    url: '/main/adminInfo',
+    method: 'get',
+  })
+}
