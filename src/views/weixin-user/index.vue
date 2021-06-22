@@ -18,6 +18,7 @@
       <el-table-column label="填写电话" prop="fillPhone" show-overflow-tooltip />
       <el-table-column label="微信电话" prop="weixinPhone" show-overflow-tooltip />
       <el-table-column label="身份证" prop="idCard" show-overflow-tooltip />
+      <el-table-column label="createdAt" prop="createdAt" show-overflow-tooltip />
     </el-table>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.currentPage" :limit.sync="listQuery.pageSize" @pagination="getList" />
@@ -26,9 +27,11 @@
 
 <script>
 import { fetchUserList } from '@/api/weixin-user'
+import Pagination from '@/components/Pagination';
 
 export default {
   name: 'WeixinUserList',
+  components: { Pagination },
   data() {
     return {
       list: [],
