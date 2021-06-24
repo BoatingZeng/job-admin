@@ -1,8 +1,22 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-button @click="getList">查询</el-button>
-      <el-button type="primary" @click="handleAdd">添加</el-button>
+      <el-select v-model="listQuery.status" placeholder="状态" clearable style="width: 90px" class="filter-item">
+        <el-option v-for="{ label, value } in jobDict.status" :key="value" :label="label" :value="value" />
+      </el-select>
+      <el-select v-model="listQuery.categoryId" placeholder="栏目" clearable style="width: 90px" class="filter-item">
+        <el-option v-for="{ id, name } in categoryList" :key="id" :label="name" :value="id" />
+      </el-select>
+      <el-select v-model="listQuery.requiredGender" placeholder="性别要求" clearable style="width: 110px" class="filter-item">
+        <el-option v-for="{ label, value } in jobDict.requiredGender" :key="value" :label="label" :value="value" />
+      </el-select>
+      <el-select v-model="listQuery.durationType" placeholder="持续时间" clearable style="width: 110px" class="filter-item">
+        <el-option v-for="{ label, value } in jobDict.durationType" :key="value" :label="label" :value="value" />
+      </el-select>
+      <el-input v-model="listQuery.searchText" placeholder="标题或标签" style="width: 200px;" class="filter-item" />
+      <el-button class="filter-item" type="primary" @click="handleSearch">查询</el-button>
+      <el-button class="filter-item" @click="handleReset">重置</el-button>
+      <el-button class="filter-item" type="primary" @click="handleAdd">添加</el-button>
     </div>
 
     <el-table
@@ -220,6 +234,16 @@ function genNumValidate(min, max) {
   }
 }
 
+function initQuery() {
+  return {
+    categoryId: '',
+    searchText: '',
+    status: '',
+    requiredGender: '',
+    durationType: '',
+  };
+}
+
 export default {
   name: 'JobList',
   components: { Pagination },
@@ -230,6 +254,7 @@ export default {
       listLoading: true,
       operating: false,
       listQuery: {
+        ...initQuery(),
         currentPage: 1,
         pageSize: 10
       },
@@ -268,7 +293,6 @@ export default {
         ]
       },
       regionDataPlus,
-      cityOptions: [],
     }
   },
   created() {
@@ -282,6 +306,17 @@ export default {
       const { dict, value2Label } = await getDict('job')
       if (dict) this.jobDict = dict;
       if (value2Label) this.jobValue2Label = value2Label;
+    },
+    handleReset() {
+      this.listQuery = {
+        ...this.listQuery,
+        ...initQuery(),
+      };
+      this.handleSearch();
+    },
+    handleSearch() {
+      this.listQuery.currentPage = 1;
+      this.getList();
     },
     async getList() {
       this.listLoading = true
@@ -300,7 +335,6 @@ export default {
       }
       const { province, city, district } = this.editingRow;
       this.editingRow.cityOptions = convertTextToCodeList(province, city, district);
-      console.log(this.editingRow.cityOptions);
       this.editDialogVisible = true
     },
     handleAdd() {
