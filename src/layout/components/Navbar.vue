@@ -17,7 +17,7 @@
         </el-tooltip>
 
       </template> -->
-
+      <div class="right-menu-item">{{ envText }}</div>
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div>{{ name || '靓仔' }}</div>
         <!-- <div class="avatar-wrapper">
@@ -63,6 +63,11 @@ export default {
     // Screenfull,
     // SizeSelect,
     // Search
+  },
+  data() {
+    return {
+      envText: process.env.VUE_APP_ENV === 'staging' ? '测试环境' : '',
+    };
   },
   computed: {
     ...mapGetters([
