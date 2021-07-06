@@ -30,9 +30,9 @@
       <el-table-column label="状态" prop="status">
         <template v-slot="scope">
           <el-tag
-            :type="scope.row.status === jobDict.status.on.value ? 'success' : 'warning'"
+            :type="parseStatus(scope.row.status)"
           >
-            {{ scope.row.status === jobDict.status.on.value ? '已上架' : '未上架' }}
+            {{ jobValue2Label.status[scope.row.status] }}
           </el-tag>
         </template>
       </el-table-column>
@@ -302,6 +302,18 @@ export default {
     this.getList();
   },
   methods: {
+    parseStatus(status) {
+      switch (status) {
+        case 0:
+          return 'warning';
+        case 1:
+          return 'success';
+        case 2:
+          return 'danger';
+        default:
+          return 'info';
+      }
+    },
     async getDict() {
       const { dict, value2Label } = await getDict('job')
       if (dict) this.jobDict = dict;
