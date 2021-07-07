@@ -61,7 +61,7 @@
           <el-input v-model.trim="editingRow.title" />
         </el-form-item>
         <el-form-item label="详情" prop="detail">
-          <el-input v-model="editingRow.detail" type="textarea" />
+          <el-input v-model="editingRow.detail" type="textarea" :rows="8" />
         </el-form-item>
         <el-row>
           <el-col :span="12">
