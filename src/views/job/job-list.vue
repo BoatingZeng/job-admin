@@ -368,9 +368,11 @@ export default {
       if (!saveRow.categoryId) saveRow.categoryId = null;
 
       const co = saveRow.cityOptions;
-      saveRow.province = parseSaveCity(CodeToText[co[0]]);
-      saveRow.city = parseSaveCity(CodeToText[co[1]]);
-      saveRow.district = parseSaveCity(CodeToText[co[2]]);
+      if (co) {
+        saveRow.province = parseSaveCity(CodeToText[co[0]]);
+        saveRow.city = parseSaveCity(CodeToText[co[1]]);
+        saveRow.district = parseSaveCity(CodeToText[co[2]]);
+      }
 
       delete saveRow.cityOptions;
       if (saveRow.id) {
